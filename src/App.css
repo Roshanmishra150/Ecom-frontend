@@ -1,0 +1,330 @@
+/* .App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */
+
+
+
+
+
+.page-container {
+  /* Set the height to 100% to cover the entire viewport */
+  height: 100%;
+}
+
+.header-1 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px; /* Set the desired height */
+  background-color: #f2f2f2; /* Set your desired background color */
+  z-index: 1; /* Ensure header 1 is above header 2 */
+  /* Add any other styles as needed */
+}
+
+.header-2 {
+  position: fixed;
+  top: 0px; 
+  /* Set the distance from the top equal to the height of header 1 */
+  left: 0;
+  width: 100%;
+  height: 300px; /* Set the desired height */
+  background-color: #ffffff; /* Set your desired background color */
+  z-index: 0;
+  /* Add any other styles as needed */
+}
+
+
+.header-1 {
+  /* ... */
+  opacity: 1; /* Set the initial opacity to 1 when visible */
+  transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
+}
+
+.header-1.hidden {
+  opacity: 0;
+}
+
+.loader {
+  border: 4px solid #f3f3f3; /* Light gray border */
+  border-top: 4px solid #3498db; /* Blue border on top (loading indicator) */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  /* background-color: #61a0d3; */
+  animation: spin 1s linear infinite; /* Use the 'spin' animation with 2 seconds duration and infinite looping */
+}
+
+.loadingPara{
+  position: absolute;
+  top: 51%;
+  left: 55%;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); /* Starting position - no rotation */
+  }
+  100% {
+    transform: rotate(360deg); /* Ending position - full rotation (360 degrees) */
+  }
+}
+
+/* AttractiveModal.css */
+
+/* Customize the modal header */
+.ant-modal-header {
+  background-color: #1890ff;
+  color: #fff;
+}
+
+/* Customize the modal title */
+.ant-modal-title {
+  color: #f50909;
+  /* background-color: #d33b3b; */
+}
+
+/* Customize the modal content */
+.ant-modal-content {
+  background-color: #f0f0f0;
+}
+
+/* Customize the modal footer */
+.ant-modal-footer {
+  border-top: 0;
+  text-align: center;
+}
+
+/* Customize the OK button */
+.ant-modal-footer .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+/* Customize the Cancel button */
+.ant-modal-footer .ant-btn {
+  margin-right: 8px;
+}
+
+/* ImageUploader.css */
+
+.image-uploader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Style the input file button */
+.input-file {
+  padding: 10px 15px;
+  /* text-align: center; */
+  /* display: inline-flex; */
+  line-height: 30px;
+  background-color: #f0f0f0;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  /* justify-content: center; */
+  transition: background-color 0.3s ease;
+}
+
+.input-file:hover {
+  background-color: #e0e0e0;
+}
+
+/* Hide the default file input appearance */
+.input-file::-webkit-file-upload-button {
+  /* visibility: hidden; */
+}
+
+/* Custom styles for the selected image */
+.selected-image {
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+.inputFields input{
+  width: 75%;
+  height: 40px;
+  margin-bottom: 10px;
+  padding: 4px;
+  outline: none;
+  text-transform: capitalize;
+}
+.inputFields textarea{
+  width: 75%;
+  /* height: 40px; */
+  margin-bottom: 10px;
+  padding: 4px;
+  outline: none;
+  text-transform: capitalize;
+}
+input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    select option:hover {
+      background-color: rgb(250, 113, 181); /* Change to your desired hover background color */
+    }
+
+
+    /* body{
+      overflow-y: hidden;
+    } */
+
+    /* .chat-log{
+      height:20vh;
+      text-align: left;
+    } */
+
+    .msger-chat {
+      flex:auto;
+      overflow-y: scroll;
+      padding: 10px;
+    }
+    
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .msger-chat::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .msger-chat {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+main{
+  /* height: 90vh; */
+}
+
+.sidebarContainer{
+  padding:"4rem";
+    height: '80vh';
+}
+    
+.leftStyle {
+  position: 'fixed';
+  top: "50px";
+  bottom: 0;
+  left: 0;
+  width: '25%';
+  padding: '20px';
+  overflow: 'hidden';
+};
+
+
+.rightStyle{
+  position: 'fixed';
+    top: "50px";
+    bottom: 0;
+    left: '25%';
+    width: '75%';
+    padding: '20px';
+    overflow-y: 'scroll';
+    -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+};
+
+
+.contentboxss{
+  /* background-color: #f7f7f7; */
+  /* border: 1px solid #ddd;
+  padding: 20px;
+  margin: 10px;
+  color: #ccc; */
+  background-color: #923434;
+  /* height: 50vh;
+  text-align: center; */
+}
+
+.image-zoom-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-zoom-main {
+  overflow: hidden;
+  width: 300px; /* Adjust the main image width */
+  height: 300px; /* Adjust the main image height */
+}
+
+.image-zoom-main-img {
+  width: 100%;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.image-zoom-container:hover .image-zoom-main-img {
+  transform: scale(2); /* Adjust the zoom level */
+}
+
+
+
+
+/* Add this to your CSS file or style tag */
+.custom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background-color: #f5f5f5;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-header button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+  font-size: 18px;
+}
+
+
+.MuiDataGrid-colCellWrapper .MuiDataGrid-menuIconButton {
+  opacity: 1 !important; /* Make the button always visible */
+  pointer-events: auto !important; /* Enable interactions */
+}
