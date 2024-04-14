@@ -26,8 +26,8 @@ import UsersMenu from "./UsersMenu";
 import { useAuth } from "../../context/AuthContext";
 
 
-import { PowerBIEmbed } from "powerbi-client-react";
-import { models } from "powerbi-client";
+// import { PowerBIEmbed } from "powerbi-client-react";
+// import { models } from "powerbi-client";
 
 const CreateProduct = () => {
   const [loading, setLoading] = useState(false);
@@ -307,7 +307,7 @@ const CreateProduct = () => {
 
 
             
-          <PowerBIEmbed
+          {/* <PowerBIEmbed
             embedConfig={{
             type: "report",
               id: "53986f37-c95e-44ca-b7d5-ae4ac3a170ae",
@@ -353,7 +353,7 @@ const CreateProduct = () => {
             getEmbeddedComponent={(embeddedReport) => {
               window.report = embeddedReport;
             }}
-          />
+          /> */}
 
 
 
