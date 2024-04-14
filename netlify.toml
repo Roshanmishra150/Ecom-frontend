@@ -1,2 +1,2 @@
 [build]
-command = “npm run prebuild && npm run build”
+command = "npm run prebuild && npm run build"
