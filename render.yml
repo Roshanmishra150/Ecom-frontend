@@ -1,7 +1,0 @@
-build:
-  env:
-    SKIP_INSTALL_DEPS: "true"
-  script: |
-    cd path/to/your/project
-    npm install --force
-    npm run build
