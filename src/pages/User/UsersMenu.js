@@ -157,9 +157,9 @@ const SideNavigation = props => {
                 <ul>
                     <li className="active-links" >
                         {!toggle
-                            ? <Tooltip placement="right" title="Dashboard">
+                            ? <Tooltip placement="right" title="Coming Soon!!!" color={"#7FBDA8"}>
                                 <NavLink
-                                    to={"/user/dashboard"}
+                                    // to={"/user/dashboard"}
                                     style={{
                                         paddingLeft: "3px",
                                         textDecoration: "none"
@@ -181,7 +181,7 @@ const SideNavigation = props => {
                                 </NavLink>
                             </Tooltip>
                             : <NavLink
-                                to={"/user/dashboard"}
+                                // to={"/user/dashboard"}
                                 style={{
                                     paddingLeft: "3px",
                                     textDecoration: "none"
@@ -294,9 +294,9 @@ const SideNavigation = props => {
                     </li>
                     <li>
                         {!toggle
-                            ? <Tooltip placement="right" title="Wishlist">
+                            ? <Tooltip placement="right" title="Coming Soon!!!" color={"#7FBDA8"}>
                                 <NavLink
-                                    to={"/user/wishlist"}
+                                    // to={"/user/wishlist"}
                                     style={{
                                         paddingLeft: "2px",
                                         textDecoration: "none"
@@ -317,7 +317,7 @@ const SideNavigation = props => {
                                 </NavLink>
                             </Tooltip>
                             : <NavLink
-                                to={"/user/wishlist"}
+                                // to={"/user/wishlist"}
                                 style={{
                                     paddingLeft: "2px",
                                     textDecoration: "none"
@@ -382,9 +382,9 @@ const SideNavigation = props => {
                     </li>
                     <li>
                         {!toggle
-                            ? <Tooltip placement="right" title="Transactions">
+                            ? <Tooltip placement="right" title="Coming Soon!!!" color={"#7FBDA8"}>
                                 <NavLink
-                                    to={"/user/transactions"}
+                                    // to={"/user/transactions"}
                                     style={{
                                         paddingLeft: "2px",
                                         textDecoration: "none"
@@ -404,7 +404,7 @@ const SideNavigation = props => {
                                 </NavLink>
                             </Tooltip>
                             : <NavLink
-                                to={"/user/transactions"}
+                                // to={"/user/transactions"}
                                 style={{
                                     paddingLeft: "2px",
                                     textDecoration: "none"

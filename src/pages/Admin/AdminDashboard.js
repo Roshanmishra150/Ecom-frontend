@@ -400,6 +400,30 @@ const Orders = () => {
                   <div className="d-flex justify-content-between">
                     <div
                       style={{ fontSize: "2rem", fontWeight: "bold" }}
+                    >{totalUser}</div>
+                    <div
+                      style={{
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      <FaUsers
+                        style={{
+                          color: "#7fbda8",
+                          fontSize: "3em",
+                          fontWeight: "bold",
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <p>Total Customer</p>
+                </div>
+              </div>
+              <div className="col-md-2 col-sm-4" style={{ padding: "10px 20px" }}>
+                <div style={{ margin: "0px 1px", backgroundColor: "#FFFFFF", borderRadius: "16px", padding: "2px 10px " }}>
+
+                  <div className="d-flex justify-content-between">
+                    <div
+                      style={{ fontSize: "2rem", fontWeight: "bold" }}
                     >{productsOrders?.length}</div>
                     <div
                       style={{
@@ -446,30 +470,7 @@ const Orders = () => {
                   <p>Total Sales</p>
                 </div>
               </div>
-              <div className="col-md-2 col-sm-4" style={{ padding: "10px 20px" }}>
-                <div style={{ margin: "0px 1px", backgroundColor: "#FFFFFF", borderRadius: "16px", padding: "2px 10px " }}>
-
-                  <div className="d-flex justify-content-between">
-                    <div
-                      style={{ fontSize: "2rem", fontWeight: "bold" }}
-                    >{totalUser}</div>
-                    <div
-                      style={{
-                        backgroundColor: "#ffffff",
-                      }}
-                    >
-                      <FaUsers
-                        style={{
-                          color: "#7fbda8",
-                          fontSize: "3em",
-                          fontWeight: "bold",
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <p>Total Customer</p>
-                </div>
-              </div>
+              
               <div className="col-md-2 col-sm-4" style={{ padding: "10px 20px" }}>
                 <div style={{ margin: "0px 1px", backgroundColor: "#FFFFFF", borderRadius: "16px", padding: "2px 10px " }}>
 
@@ -525,7 +526,10 @@ const Orders = () => {
 
                   <select className=" float-end"
                     style={{ marginTop: "-30px", backgroundColor: "#7FBDA8", color: "#fff", height: "23px" }}
-                    onChange={(event) => { setSelectedYear(parseInt(event.target.value)) }}
+                    onChange={(event) => { 
+                      setSelectedYear(parseInt(event.target.value))
+                      setTotalSale(0)
+                     }}
                     value={selectedYear}>
                     {
                       getDropList()
