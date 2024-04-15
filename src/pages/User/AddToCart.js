@@ -143,7 +143,7 @@ const CreateProduct = () => {
                         name: item.product.name,
                         slug: item.product.slug,
                         description: item.product.description,
-                        quantity: item.product.quantity,
+                        quantity: item?.quantity,
                         totalCost: item.product.price,
                         price: item.product.price,
                         productId: item.product._id,
