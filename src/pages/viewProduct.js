@@ -134,7 +134,7 @@ const Orders = () => {
       const value = segments[segments.length - 1];
       sessionStorage.setItem('productId', id)
       sessionStorage.setItem('slug', value) 
-      window.location.replace(`http://localhost:3000/view-product`);
+      window.location.replace(`${process.env.REACT_APP_URL}/view-product`);
     }
     setShowViewCart(false)
     getProductLists();
