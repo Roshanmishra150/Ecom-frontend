@@ -129,7 +129,7 @@ const CreateProduct = () => {
     };
 
     return (
-        <Layout title="create-product admin">
+        <Layout title="notification E-comm">
             <div style={containerStyle} className="container-fluid m-0 p-4">
                 <div className="row ">
                     <div style={leftStyle} className="col-md-3 ">
@@ -172,9 +172,23 @@ const CreateProduct = () => {
                                                 <Typography variant="body1">
                                                     From: {item?.name}
                                                 </Typography>
-                                                <Typography variant="body2">
-                                                    Message: {item?.content}
+                                                {
+                                                    item?.question && item?.question != "" ? (
+                                                        <>
+                                                        <Typography variant="body2">
+                                                        <span style={{color:"#01aaaa"}}>Question: {item?.question}</span>
                                                 </Typography>
+                                                <Typography variant="body2">
+                                                <span style={{color:"#01aaaa"}}>Answer: {item?.answer}</span>
+                                            </Typography>
+                                            </>
+                                                    ) : (
+                                                        <Typography variant="body2">
+                                                    <span style={{color:"#01aaaa"}}>Message: {item?.content}</span>
+                                                </Typography>
+                                                    )
+                                                }
+                                                
                                             </div>
                                             <p style={{ float: "right" }}>
                                                 <h6>

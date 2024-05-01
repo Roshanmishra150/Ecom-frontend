@@ -126,7 +126,7 @@ const Orders = () => {
     }
 
     return (
-        <Layout title="create-product admin">
+        <Layout title="order E-comm">
             <div style={containerStyle} className="container-fluid m-0 p-4">
                 <div className="row ">
                     <div style={leftStyle} className="col-md-3 ">
@@ -161,7 +161,7 @@ const Orders = () => {
                                             </>
                                         ) : (
                                             // <div className="" style={{padding:"4px", boxShadow: "0 0 15px rgba(62, 62, 62, 0.5)"}}>
-                                            <div className="cardHover" style={{ padding: "4px", cursor: "pointer" }} onClick={() => {
+                                            <div className="cardHover" style={{ padding: "4px" }} onClick={() => {
                                                 console.log("item click", item);
                                                 // navigate(`/user/orders#${index}`)
                                             }}>
@@ -223,7 +223,7 @@ const Orders = () => {
                                                     item?.products?.map((items, index) => {
                                                         return ( */}
                                                 <div
-                                                    className="card mb-3"
+                                                    className="cards mb-3"
                                                 >
                                                     <div className="row g-1">
                                                         <div className="col-md-3">
@@ -816,7 +816,7 @@ const Orders = () => {
                                 <div className="container py-5 h-50">
                                     <div className="row d-flex justify-content-center align-items-center h-50">
                                         <div className="col-12">
-                                            <div className="card card-stepper text-black" style={{ borderRadius: 16 }}>
+                                            <div className="cards card-stepper text-black" style={{ borderRadius: 16 }}>
                                                 <div className="card-body p-5">
                                                     <div className="d-flex justify-content-between align-items-center mb-5">
                                                         <div>

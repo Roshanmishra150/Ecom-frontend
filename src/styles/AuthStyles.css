@@ -1,11 +1,13 @@
 /* ===================================
 ========= register page  */
+
 .form-container {
   margin-top: 0px;
   display: flex;
+  height: calc(100vh - 50px);
   align-items: center;
   justify-content: center;
-  min-height: 70vh;
+  min-height: auto;
   flex-direction: column;
   background-color: #ffdee9;
   background-image: linear-gradient(0deg, #ffdee9 0%, #b5fffc 100%);

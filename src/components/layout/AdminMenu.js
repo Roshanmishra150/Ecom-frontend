@@ -9,127 +9,12 @@ import { NavLink, useLocation } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
+import { FaQuestionCircle } from "react-icons/fa";
 
-import logo from "../../logo4.png";
+import logo from "../../images/logo4.png";
 import { Tooltip } from "antd";
 import { MdPayment } from "react-icons/md";
 
-
-// const AdminMenu = () => {
-//   const [activeLink, setActiveLink] = useState("/admin/dashboard");
-//   const location = useLocation();
-//   const [auth, setAuth] = useAuth();
-
-//   const handleNavLinkClick = (to) => {
-//     setActiveLink(to);
-//   };
-
-//   // useEffect(() => {
-//   //   if (location.pathname === "/admin/create-product") {
-//   //     setActiveLink("/admin/manage-product");
-//   //   } else {
-//   //     setActiveLink("");
-//   //   }
-//   // }, [location.pathname]);
-
-//   return (
-//     <>
-//       <div className="text-left ">
-//         <h3 className=" text-center">Admin Panel</h3>
-//         <div className="list-group">
-//           <NavLink
-//             to="/admin/homepage"
-//             className={`list-group-item list-group-item-action `}
-//             onClick={() => handleNavLinkClick("/")}
-//           >
-//             <IoHome style={{ fontSize: "22px", marginRight: "15px" }} />
-//             Home
-//           </NavLink>
-          
-//           <NavLink
-//             to="/admin/create-category"
-//             className={`list-group-item list-group-item-action`}
-//             onClick={() => handleNavLinkClick("/admin/create-category")}
-//           >
-//             <MdOutlineCategory
-//               style={{ fontSize: "22px", marginRight: "15px" }}
-//             />
-//             Manage Category
-//           </NavLink>
-//           <NavLink
-//             to="/admin/manage-product"
-//             className={`list-group-item list-group-item-action ${
-//               activeLink === "/admin/manage-product" ? "active" : ""
-//             }`}
-//             onClick={() => handleNavLinkClick("/admin/manage-product")}
-//           >
-//             <SiElement style={{ fontSize: "22px", marginRight: "10px" }} />{" "}
-//             Manage Product
-//           </NavLink>
-//           <NavLink
-//             to="/admin/users"
-//             className={`list-group-item list-group-item-action  `}
-//             onClick={() => handleNavLinkClick("/admin/users")}
-//           >
-//             <FaUsers style={{ fontSize: "22px", marginRight: "10px" }} /> Users
-//           </NavLink>
-//           <NavLink
-//             to="/admin/orders"
-//             className={`list-group-item list-group-item-action  `}
-//             onClick={() => handleNavLinkClick("/admin/orders")}
-//           >
-//             <FaJediOrder style={{ fontSize: "22px", marginRight: "10px" }} />{" "}
-//             Manage Order
-//           </NavLink>
-//           <NavLink
-//             to="/admin/setting"
-//             className={`list-group-item list-group-item-action  `}
-//             onClick={() => handleNavLinkClick("/admin/setting")}
-//           >
-//             <FiSettings style={{ fontSize: "22px", marginRight: "10px" }} />{" "}
-//             Setting
-//           </NavLink>
-//           {auth?.user ? (
-//             <NavLink
-//               to="/login"
-//               className={`list-group-item list-group-item-action  `}
-//               onClick={() => {
-//                 setAuth({
-//                   ...auth,
-//                   user: null,
-//                   token: "",
-//                 });
-//                 sessionStorage.removeItem("user");
-//                 sessionStorage.removeItem("token");
-//                 sessionStorage.clear()
-//                 toast.success("Successfully Logout");
-//               }}
-//             >
-//               <AiOutlineLogout
-//                 style={{ fontSize: "22px", marginRight: "10px" }}
-//               />{" "}
-//               Logout
-//             </NavLink>
-//           ) : (
-//             <>
-//               <NavLink
-//                 to="/login"
-//                 className={`list-group-item list-group-item-action  `}
-//                   // onClick={() => handleNavLinkClick("/admin/setting")}
-//                   onClick={() => {
-//                     sessionStorage.clear()
-//                   }}
-//               >
-//                 <AiOutlineLogout style={{ fontSize: "22px", marginRight: "10px" }} />{" "}
-//                 Login
-//               </NavLink>
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
 
 
 
@@ -407,21 +292,21 @@ const AdminMenu = (props) => {
               </NavLink>
             )}
           </li>
-          <li className="comeingSoons">
+          <li className="">
             {!toggle ? (
-              <Tooltip placement="right" title="Coming Soon!!!" 
-              color={"#7FBDA8"}
+              <Tooltip placement="right" title="FAQS" 
+              // color={"#7FBDA8"}
               // sty={{
               //   color:"#fff",
               //   backgroundColor:"#7FBDA8"
               // }}
               >
                 <NavLink
-                  // to={"/admin/transactions"}
+                  to={"/admin/faqs"}
                   style={{ paddingLeft: "2px", textDecoration:"none"  }}
                 >
-                  <MdPayment style={{ fontSize: '22px', marginRight:"5px" }}/> 
-                  {!toggle ? "" : <span style={{fontSize:"16px"}}>Transactions</span>}
+                  <FaQuestionCircle style={{ fontSize: '22px', marginRight:"5px" }}/> 
+                  {!toggle ? "" : <span style={{fontSize:"16px"}}>FAQS</span>}
                   {/* <span style={{
                     width:"200px",
                     backgroundColor:"aliceblue",
@@ -431,10 +316,10 @@ const AdminMenu = (props) => {
               </Tooltip>
             ) : (
               <NavLink 
-              // to={"/admin/transactions"}
+              to={"/admin/faqs"}
                style={{ paddingLeft: "2px", textDecoration:"none"  }}>
-                <MdPayment style={{ fontSize: '22px', marginRight:"5px" }}/> 
-                {!toggle ? "" : <span style={{fontSize:"16px"}}>Transactions</span>}
+                <FaQuestionCircle style={{ fontSize: '22px', marginRight:"5px" }}/> 
+                {!toggle ? "" : <span style={{fontSize:"16px"}}>FAQS</span>}
               </NavLink>
             )}
           </li>

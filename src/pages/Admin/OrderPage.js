@@ -675,7 +675,7 @@ const OrderPage = () => {
     }
   }
   return (
-    <Layout title="create-product admin">
+    <Layout title="order E-comm">
       <div style={containerStyle} className="container-fluid m-0 p-4">
         <div className="row ">
           <div style={leftStyle} className="col-md-3 ">
@@ -1302,7 +1302,7 @@ const OrderPage = () => {
                     viewOrderPageDetails?.Products?.map((item, index) => {
                       return (
                         <div
-                          className="card mb-3"
+                          className="cardss mb-3"
                           style={{
                             height: "105px",
 

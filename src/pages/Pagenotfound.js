@@ -11,7 +11,7 @@ const Pagenotfound = () => {
   const containerStyle = {
     padding: "4rem",
     height: "80vh",
-    width:"100%"
+    width: "100%"
   };
 
   const leftStyle = {
@@ -29,7 +29,7 @@ const Pagenotfound = () => {
     top: "50px",
     bottom: 0,
     left: auth?.toggle ? "220px" : "50px",
-    width: auth?.toggle ? "85.4%"  : "96.6%",
+    width: auth?.toggle ? "85.4%" : "96.6%",
     padding: "20px",
     overflowY: "scroll",
   };
@@ -61,40 +61,49 @@ const Pagenotfound = () => {
     // </Layout>
 
 
-    <Layout title="page not found">
+    <Layout title="page not found - E-comm">
       <div style={containerStyle} className="container-fluid m-0 p-4">
         <div className="row ">
           <div style={leftStyle} className="col-md-3 ">
-            {auth?.user?.role === 1 ? <AdminMenu /> : <UsersMenu />}
+            {/* {auth?.user?.role === 1 ? <AdminMenu /> : <UsersMenu />} */}
           </div>
           <style>{lightScrollbarCSS}</style>
           <div style={rightStyle} className="col-md-9 ">
 
-          <div className="pnf">
-            <h1 className="pnf-title">404</h1>
+            <div className="pnf">
+              <h1 className="pnf-title">404</h1>
               <h2 className="pnf-heading">Oops ! Page Not Found</h2>
-              {!auth ? (
-                <Link to="/" onClick={() => {
-                  sessionStorage.clear()
-                }} className="pnf-btn">
-                  Go Back
-                </Link>
-              ) : ((auth?.user?.role == "0" ? 
-              <Link to="/user/homepage" className="pnf-btn">
-              Go Back
-                  </Link> : 
-                  <Link to="/admin/homepage" className="pnf-btn">
-                  Go Back
-                </Link>
-              )
-              )}
-          </div>
 
-            
+              {
+                auth?.user?.role == "0" ?
+                (
+                  <Link to="/user/homepage" className="pnf-btn">
+                    Go Back
+                  </Link>
+                ) : auth?.user?.role =="1" ? 
+                (
+                  <Link to="/admin/homepage" className="pnf-btn">
+                    Go Back
+                  </Link>
+                ) : 
+                (
+                  <Link to="/" className="pnf-btn">
+                  Go Back
+                </Link>
+                )
+              }
+
+
+
+              
+
+            </div>
+
+
           </div>
         </div>
 
-      
+
       </div>
     </Layout>
   );

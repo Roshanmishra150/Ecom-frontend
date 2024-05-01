@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../components/layout/Layout";
-import AdminMenu from "../components/layout/AdminMenu";
-import UsersMenu from "../pages/User/UsersMenu";
+// import Layout from "../components/layout/Layout";
+import Layout from "../../components/layout/Layout";
+import AdminMenu from "../../components/layout/AdminMenu";
+import UsersMenu from "../../pages/User/UsersMenu";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import "antd/dist/reset.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdDeleteForever } from "react-icons/md";
 import { FiEdit2 } from "react-icons/fi";
 
-import '../styles/Homepage.css'
+import "../../styles/Homepage.css";
 import { BsPersonFill } from "react-icons/bs";
 import { HiShoppingBag } from "react-icons/hi";
 import { GiBilledCap } from "react-icons/gi";
@@ -24,19 +25,15 @@ import Checkbox from "@mui/material/Checkbox";
 import Rating from "@mui/material/Rating";
 import Box from "@mui/material/Box";
 import StarIcon from "@mui/icons-material/Star";
-import { useAuth } from "../context/AuthContext";
-
-import "../styles/CartStyles.css"
-import Footer from "../components/layout/Footer";
+import { useAuth } from "../../context/AuthContext";
 
 const CreateProduct = () => {
-  const location = useLocation()
   const [loading, setLoading] = useState(false);
   const [auth, setAuth] = useAuth();
   const [filterFlag, setFilterFlag] = useState(false);
   const [totalProduct, setTotalProduct] = useState(0);
   const [filterCategory, setFilterCategory] = useState([]);
-  const [filterPrice, setFilterPrice] = useState([]);
+  const [filterPrice, setFilterPrice] = useState("");
   const [productLists, setProductLists] = useState([]);
   const [tempProductList, setTempProductList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
@@ -45,6 +42,7 @@ const CreateProduct = () => {
 
   const [value, setValue] = React.useState(2);
   const [hover, setHover] = React.useState(-1);
+  const params = useParams();
 
   const priceArray = ["All", "0-10000", "10001-20000", "20001-30000", "above"];
 
@@ -77,6 +75,7 @@ const CreateProduct = () => {
   const containerStyle = {
     padding: "4rem",
     height: "80vh",
+    width: "100%"
   };
 
   const leftStyle = {
@@ -84,7 +83,7 @@ const CreateProduct = () => {
     top: "50px",
     bottom: 0,
     left: 0,
-    width: "25%",
+    // width: "25%",
     padding: "20px",
     overflow: "hidden",
   };
@@ -93,22 +92,42 @@ const CreateProduct = () => {
     position: "fixed",
     top: "50px",
     bottom: 0,
-    // left: "25%",
-    width: "100%",
+    left: auth?.toggle ? "220px" : "50px",
+    width: auth?.toggle ? "85.4%" : "96.6%",
     padding: "20px",
     overflowY: "scroll",
   };
 
+  const lightScrollbarCSS = `
+  /* Customize the scrollbar for webkit (Chrome, Safari) */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0); /* Light background color */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3); /* Light thumb color */
+    border-radius: 6px; /* Rounded corners for the thumb */
+  }
+  `;
   const getProductLists = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/product/get-products`
+      const data = await axios.get(
+        `${process.env.REACT_APP_API}/api/v1/product/get-wishlist/${auth?.user?._id}`
       );
-      if (data.success) {
-        setTempProductList(data.products);
-        setProductLists(data.products);
-        setTotalProduct(data.count);
+      if (data?.data?.success) {
+        let productArray = []
+        data?.data?.wishlist?.map((item, index) => {
+          productArray.push(item?.productId)
+        })
+        setTempProductList(productArray);
+        setProductLists(productArray);
+        // setTotalProduct(data.count);
+        // sessionStorage.setItem("totalProducts", JSON.stringify(data.count));
       }
       setLoading(false);
     } catch (error) {
@@ -139,35 +158,20 @@ const CreateProduct = () => {
   useEffect(() => {
     getProductLists();
     getAllCategory();
-
-    if (location.pathname === "/") {
-      sessionStorage.clear()
-    }
   }, []);
 
-  const handelDelete = async (item) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.delete(
-        `${process.env.REACT_APP_API}/api/v1/product//delete-product/${item._id}`
-      );
-      if (data.success) {
-        toast.success(`Successfully deleted product ${item.name}`);
-        getProductLists();
-      }
-      setLoading(false);
-    } catch (error) {
-      toast.error("Something went wrong in deleting product");
-    }
-  };
+
 
   const onChangeSearchHandler = async (keyword) => {
     try {
       setLoading(true);
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/product/get-searched-product/${keyword}`
+      // const { data } = await axios.get(
+      //   `${process.env.REACT_APP_API}/api/v1/product/get-searched-product/${keyword}`
+      // );
+      const filteredProducts = tempProductList.filter(product =>
+        product.name.toLowerCase().startsWith(keyword.toLowerCase())
       );
-      setProductLists(data);
+      setProductLists(filteredProducts);
       setLoading(false);
     } catch (error) {
       getProductLists();
@@ -185,67 +189,85 @@ const CreateProduct = () => {
     }
   };
 
-  const ProductFilterHandler = async () => {
-    let categoryIds = [];
+  // const ProductFilterHandler = async () => {
+  //   let categoryIds = [];
+  //   const filterMinPrice = "";
+  //   let filterMaxPrice = "";
 
-    if (filterCategory != "") {
-      // filterCategory.map((item) => {
-      //   allCategory?.map((item, index) => {
-      //     filterCategory?.map((f) => {
-      //       if (item.name === f) {
-      //         categoryIds.push(item._id);
-      //       }
-      //     });
-      //   });
-      // });
 
-      allCategory.map((item, index) => {
-        filterCategory.map((name, index) => {
-          if (item.name === name) {
-            categoryIds.push(item._id);
-          }
-        });
-      });
 
-      try {
-        setLoading(true);
-        const {
-          data,
-        } = await axios.post(
-          `${process.env.REACT_APP_API}/api/v1/product/filter-products`,
-          { categoryIds }
+
+  //   if (filterCategory != "") {
+  //     allCategory.map((item, index) => {
+  //       filterCategory.map((name, index) => {
+  //         if (item.name === name) {
+  //           categoryIds.push(item._id);
+  //         }
+  //       });
+  //     });
+  //   }
+
+
+  //   try {
+  //     setLoading(true);
+  //     const {
+  //       data,
+  //     } = await axios.post(
+  //       `${process.env.REACT_APP_API}/api/v1/product/filter-products`,
+  //       { categoryIds, filterPrice }
+  //     );
+  //     if (data?.success) {
+  //       setProductLists(data.products);
+  //     }
+  //     setFilterFlag(false);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     toast.error("Something went wrong while filtering product ");
+  //     setFilterFlag(false);
+  //     getProductLists();
+  //   }
+  // };
+
+
+  const ProductFilterHandler = () => {
+    let filteredProducts = [];
+
+    if (filterCategory.length > 0 || filterPrice != "") {
+      // Filter products based on category
+      if (filterCategory.length > 0 && filterCategory.length > 0) {
+        filteredProducts = tempProductList.filter(product =>
+          filterCategory.some(categoryName =>
+            product.category?.name === categoryName
+          )
         );
-        if (data?.success) {
-          setProductLists(data.products);
-        }
-        setFilterFlag(false);
-        setLoading(false);
-      } catch (error) {
-        toast.error("Something went wrong while filtering product ");
-        setFilterFlag(false);
-        getProductLists();
       }
-    }
-    if (filterPrice != "") {
-      const filteredProducts = tempProductList.filter((product) => {
-        const price = product.price;
-        if (filterPrice === "above") {
-          return price > 30000;
-        }
-        if (filterPrice === "All") {
-          getProductLists();
+
+      // Filter products based on price range
+      if (filterPrice != "ALL" && filterPrice != "above" && filterPrice !== "") {
+        const [minPriceStr, maxPriceStr] = filterPrice.split("-");
+        const filterMinPrice = parseInt(minPriceStr);
+        const filterMaxPrice = parseInt(maxPriceStr);
+        if (filteredProducts?.length > 0) {
+
+          filteredProducts = filteredProducts.filter(product =>
+            product.price >= filterMinPrice && product.price <= filterMaxPrice
+          );
         } else {
-          const [min, max] = filterPrice.split("-").map(Number);
-          return price >= min && price <= max;
+
+          filteredProducts = tempProductList.filter(product =>
+            product.price >= filterMinPrice && product.price <= filterMaxPrice
+          );
         }
-      });
+      }
       setProductLists(filteredProducts);
-      setFilterFlag(false);
     } else {
-      getProductLists();
-      setFilterFlag(false);
+      getProductLists()
     }
+
+    // Update the product list
+    setFilterFlag(false)
   };
+
 
   const sortProductFunction = (basedOn) => {
     if (basedOn === "name") {
@@ -266,37 +288,17 @@ const CreateProduct = () => {
     }
   };
 
-
-  const images = [
-    'https://picsum.photos/200/300?grayscale',
-    'ihttps://picsum.photos/seed/picsum/200/300',
-    'ihttps://picsum.photos/id/237/200/300',
-    // Add more image paths here
-  ];
-
+  console.log("check log", filterCategory, filterPrice);
 
   return (
-    <Layout title="E-commerce">
+    <Layout title="wishlist E-comm">
       <div style={containerStyle} className="container-fluid m-0 p-4">
         <div className="row ">
           <div style={leftStyle} className="col-md-3 ">
-            {/* {auth?.user?.role === 1 ? <AdminMenu/> : <UsersMenu/>} */}
-            {/* <AdminMenu /> */}
+            {auth?.user?.role === 1 ? <AdminMenu /> : <UsersMenu />}
           </div>
-
-          <div style={rightStyle} className="col-md-12 ">
-            {/* <div className=" d-flex justify-content-between">
-              <h3>Manage Products</h3>
-              <button
-                class="btn btn-outline-primary h-25"
-                type="button"
-                onClick={() => {
-                  navigate("/admin/create-product");
-                }}
-              >
-                Create New Product
-              </button>
-            </div> */}
+          <style>{lightScrollbarCSS}</style>
+          <div style={rightStyle} className="col-md-9 ">
 
             {/* <div className="row">
               <div className="col-md-3 col-sm-6 ">
@@ -347,38 +349,7 @@ const CreateProduct = () => {
                 <p style={{ backgroundColor: "lightgray", fontSize: "larger", color: "gray", marginLeft: "-10px", width: "100%", border: "none", paddingLeft: "13px", paddingBottom: "8px" }}>Performance</p>
 
               </div>
-              
-              
             </div> */}
-
-            <div className="carousel">
-              <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                </div>
-                <div class="carousel-inner">
-                  <div class="carousel-item active">
-                    <img src="/logo192.png" class="d-block w-100" height="500vh" alt="..." />
-                  </div>
-                  <div class="carousel-item">
-                    <img src="/logo192.png" class="d-block w-100" height="500vh" alt="..." />
-                  </div>
-                  <div class="carousel-item">
-                    <img src="/logo192.png" class="d-block w-100" height="500vh" alt="..." />
-                  </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Next</span>
-                </button>
-              </div>
-            </div>
 
             <div
               className="row border-1 "
@@ -451,148 +422,107 @@ const CreateProduct = () => {
               </div>
             </div>
 
-            <div className="container-fluid">
-              <div className="card-container">
-                {loading ? (
-                  <>
-                    <div className="loader"></div>
-                    <p className="loadingPara">Loading...</p>
-                  </>
-                ) : (
-                  <>
-                    {productLists.length > 0 ? (
-                      productLists?.map((item, index) => {
-                        return (
-                          <div className="card" onClick={() => {
-                            sessionStorage.setItem(
-                              "productId",
-                              item._id
-                            );
-                            sessionStorage.setItem("slug", item.slug);
-                            navigate('/view-product')
-                          }}>
-                            <div className="" style={{ maxWidth: '350px', width: '100%' }}>
-
-                              <img
-                                src={`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${item._id}`}
-                                className="card-img-top"
-                                alt="..."
-                                style={{ width: "100%", height: "190px" }}
-                              />
-                              <div className="card-body">
-                                <h5 className="card-title">
-                                  {item.name}
-                                </h5>
-                                <p className="card-text">{(item.description).split(' ').slice(0, 30).join(' ')}</p>
-                                <div>
-                                  <Box
-                                    sx={{
-                                      width: 200,
-                                      display: "flex",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <Rating
-                                      name="hover-feedback"
-                                      value={item?.averageRating}
-                                      precision={0.5}
-                                      getLabelText={getLabelText}
-                                      // onChange={(event, newValue) => {
-                                      //   setValue(newValue);
-                                      // }}
-                                      onChangeActive={(event, newHover) => {
-                                        setHover(newHover);
-                                      }}
-                                      emptyIcon={
-                                        <StarIcon
-                                          style={{
-                                            opacity: 0.5,
-                                            verticalAlign: "text-bottom",
-                                          }} // Adjust the vertical alignment
-                                          fontSize="inherit"
-                                        />
-                                      }
-                                      readOnly
-                                    />
-                                    {/* {value !== null && (
-                                      <Box sx={{ ml: 2 }}>
-                                        {labels[hover !== -1 ? hover : value]}
-                                      </Box>
-                                    )} */}
-                                  </Box>
-                                </div>
-                                <h5 className="card-title" style={{ marginTop: "4px" }}>
-                                  ${item.price}
-                                </h5>
-                                {/* <div>
-                                  <button className="btn btn-primary">
-
-                                  </button>
-                                </div> */}
-                              </div>
-                              {/* <div className=" d-flex justify-content-around pb-2">
-                                <button
-                                  type=""
-                                  className="btn btn-outline-danger "
-                                  onClick={() => handelDelete(item)}
-                                  style={{ paddingBottom: "3px" }}
-                                >
-                                  <MdDeleteForever
-                                    style={{
-                                      fontSize: "17px",
-                                      marginRight: "3px",
-                                      marginTop: "-3px",
-                                    }}
-                                  />{" "}
-                                  Delete
-                                </button>
-
-                                <button
-                                  type="button"
-                                  className="btn btn-outline-primary"
-                                  onClick={() => {
-                                    sessionStorage.setItem("productId", item._id);
-                                    sessionStorage.setItem("slug", item.slug);
-                                    navigate("/admin/edit-product");
+            <div className="card-container">
+              {loading ? (
+                <>
+                  <div className="loader"></div>
+                  <p className="loadingPara">Loading...</p>
+                </>
+              ) : (
+                <>
+                  {loading === false && productLists.length > 0 ? (
+                    productLists?.map((item, index) => {
+                      return (
+                        <div
+                          className="col "
+                        //   onClick={() => {
+                        //       // navigate("/view-product");
+                        //       sessionStorage.setItem("productId", item. )
+                        //       auth?.user?.role == 1 ? navigate("/admin/view-product") : navigate("/user/view-product")
+                        //   }}
+                        >
+                          <div
+                            style={{ cursor: "pointer" }}
+                            className="card h-100 cardHover"
+                            onClick={() => {
+                              sessionStorage.setItem(
+                                "productId",
+                                item._id
+                              );
+                              sessionStorage.setItem("slug", item.slug);
+                              auth?.user?.role == 1 ? navigate("/admin/view-product") : navigate("/user/view-product")
+                            }}
+                          >
+                            <img
+                              src={`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${item._id}`}
+                              className="card-img-top"
+                              alt="..."
+                              style={{ width: "100%", height: "190px" }}
+                            />
+                            <div className="card-body">
+                              <h5 className="card-title">
+                                {item.name}
+                                {/* $<span>{item.price}</span> */}
+                              </h5>
+                              <p className="card-text" >{(item.description).split(' ').slice(0, 30).join(' ')}</p>
+                              <div>
+                                <Box
+                                  sx={{
+                                    width: 200,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between"
                                   }}
                                 >
-                                  <FiEdit2
-                                    style={{
-                                      fontSize: "17px",
-                                      marginRight: "6px",
-                                      marginTop: "-3px",
+                                  <Rating
+                                    name="hover-feedback"
+                                    value={item?.averageRating}
+                                    precision={0.5}
+                                    getLabelText={getLabelText}
+                                    onChange={(event, newValue) => {
+                                      setValue(newValue);
                                     }}
-                                  />{" "}
-                                  Edit
-                                </button>
-                              </div> */}
+                                    onChangeActive={(event, newHover) => {
+                                      setHover(newHover);
+                                    }}
+                                    emptyIcon={
+                                      <StarIcon
+                                        style={{
+                                          opacity: 0.5,
+                                          verticalAlign: "text-bottom",
+                                        }} // Adjust the vertical alignment
+                                        fontSize="inherit"
+                                      />
+                                    }
+                                    readOnly
+                                  />
+                                  {/* {value !== null && (
+                                    <Box sx={{ ml: 2 }}>
+                                      {labels[hover !== -1 ? hover : value]}
+                                    </Box>
+                                  )} */}
+                                </Box>
+                                <div style={{ fontWeight: "bold", marginTop: "3px" }}>
+                                  ${item.price}
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        );
-                      })
-                    ) : (
-                      <>
-                        <div className="loader"></div>
-                        <p className="loadingPara">Loading...</p>
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-              <div style={{marginTop:"20px"}}>
-
-              <Footer />
-              </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <>
+                      <p style={{ display: "flex", justifyContent: "center" }}> No Data Available</p>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
-
-
         </div>
 
-
-
         {/* Filter modal */}
-        
         <Modal open={filterFlag} style={{ width: "100px" }}>
           <div
             className={
@@ -696,7 +626,10 @@ const CreateProduct = () => {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         value={filterPrice}
-                        onChange={(e) => setFilterPrice(e.target.value)}
+                        onChange={(e) => {
+                          console.log("filterprice, ", e.target.value);
+                          setFilterPrice(e.target.value)
+                        }}
                         style={{ width: "300px", height: "40px" }}
                         displayEmpty
                       >
@@ -719,7 +652,9 @@ const CreateProduct = () => {
                     data-bs-dismiss="modal"
                     onClick={() => {
                       setFilterCategory([]);
-                      setFilterPrice([]);
+                      setFilterPrice("");
+                      setFilterFlag(false)
+                      getProductLists()
                     }}
                   >
                     Remove Filter
@@ -729,8 +664,8 @@ const CreateProduct = () => {
                     className="btn btn-outline-danger"
                     data-bs-dismiss="modal"
                     onClick={() => {
-                      setFilterCategory([]);
-                      setFilterPrice([]);
+                      // setFilterCategory([]);
+                      // setFilterPrice("");
                       setFilterFlag(false);
                     }}
                   >
@@ -751,9 +686,9 @@ const CreateProduct = () => {
           </div>
         </Modal>
       </div>
-      {/* <Footer/> */}
     </Layout>
   );
 };
 
 export default CreateProduct;
+

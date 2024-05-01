@@ -18,7 +18,9 @@ import UsersMenu from "../User/UsersMenu";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
 import { Modal } from "@mui/material";
-import gif from '../../thank-you.gif'
+import gif from '../../images/thank-you.gif'
+import { FaHeart } from "react-icons/fa";
+
 
 
 const Orders = () => {
@@ -61,6 +63,8 @@ const Orders = () => {
     const [selectedRating, setSelectedRating] = useState(null);
     const [hoveredEmotion, setHoveredEmotion] = useState(null);
     const [showGif, setShowGif] = useState(false);
+    const [wishlistFlag, setWishlistFlag] = useState(true);
+
 
 
     const handleRatingHover = (rating) => {
@@ -118,10 +122,10 @@ const Orders = () => {
                     transform: selectedRating === index + 1 ? 'scale(1.5)' : 'scale(1)',
                     ...(selectedRating === index + 1 && {
                         '&:hover': {
-                          transform: 'scale(1.2)',
-                          '&::after': {
-                            transform: 'scaleX(1)',
-                          },
+                            transform: 'scale(1.2)',
+                            '&::after': {
+                                transform: 'scaleX(1)',
+                            },
                         },
                     })
                 }}
@@ -134,18 +138,18 @@ const Orders = () => {
             >
                 {emoji}
                 <span className="underline" style={{
-        content: '',
-        position: 'absolute',
-        width: '100%',
-        transform: 'scaleX(0)',
-        height: '2px',
-        bottom: '-2px',
-        left: 0,
-        backgroundColor: '#0087ca',
-        transformOrigin: 'bottom left',
-        transition: 'transform 0.25s ease-out',
-      }} />
-    </span>
+                    content: '',
+                    position: 'absolute',
+                    width: '100%',
+                    transform: 'scaleX(0)',
+                    height: '2px',
+                    bottom: '-2px',
+                    left: 0,
+                    backgroundColor: '#0087ca',
+                    transformOrigin: 'bottom left',
+                    transition: 'transform 0.25s ease-out',
+                }} />
+            </span>
         ));
     };
 
@@ -265,8 +269,8 @@ const Orders = () => {
     }, []);
 
     useEffect(() => {
-        if(productLists?._id && productLists?.category){
-        getSimilarProductLists();
+        if (productLists?._id && productLists?.category) {
+            getSimilarProductLists();
         }
     }, [productLists]);
 
@@ -325,11 +329,12 @@ border-radius: 4px; /* Rounded corners for the thumb */
     const magnifiedImageStyle = {
         marginLeft: "100px",
         width: "780px", // Adjust the magnified image width
-        height: "100%", // Adjust the magnified image height
+        height: "120%", // Adjust the magnified image height
         backgroundImage: `url(${`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${productLists._id}`})`,
         backgroundRepeat: "no-repeat",
-        backgroundPosition: `-${mousePosition.x * 3}px -${mousePosition.y * 0.9}px`, // Adjust magnification
+        backgroundPosition: `-${mousePosition.x * 1}px -${mousePosition.y * 0.9}px`, // Adjust magnification
         visibility: isHovered ? "visible" : "hidden",
+        backgroundSize: "100% auto",
     };
 
     const handleMouseMove = (e) => {
@@ -423,12 +428,12 @@ border-radius: 4px; /* Rounded corners for the thumb */
         try {
 
             // productId, rating, comment, userId
-            const { data } = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/rating`, { productId: productLists?._id ,rating:(selectedRating / 2), comment:"", userId: auth?.user?._id });
-            
-            if(data?.success){
+            const { data } = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/rating`, { productId: productLists?._id, rating: (selectedRating / 2), comment: "", userId: auth?.user?._id });
+
+            if (data?.success) {
                 toast.success(data?.message)
                 loadOrderList()
-                setRatingFlag(false)            
+                setRatingFlag(false)
                 setShowGif(true);
 
             }
@@ -437,13 +442,32 @@ border-radius: 4px; /* Rounded corners for the thumb */
         } finally {
             // Hide the GIF after 2 minutes
             setTimeout(() => {
-              setShowGif(false);
+                setShowGif(false);
             }, 5000)
         }
     }
 
+    const setToWishlistHandler = async () => {
+        try {
+            const body = {
+                "products": sessionStorage.getItem("productId"),
+                "userId": auth?.user?._id
+            }
+
+            const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/set-wishlist`, body)
+
+            if (res?.data?.success) {
+                toast.success("Product successfully added to whislist")
+                setWishlistFlag(false)
+            }
+
+        } catch (error) {
+
+        }
+    }
+
     return (
-        <Layout title="viewProduct - E-comm">
+        <Layout title="viewOrderProduct - E-comm">
             <div style={containerStyle} className="container-fluid p-4 m-0">
                 <div style={containerStyle} className="container-fluid m-0 p-4">
                     <div className="row ">
@@ -601,20 +625,40 @@ border-radius: 4px; /* Rounded corners for the thumb */
                                                     <br></br>
                                                     {
                                                         auth && auth?.user?.role == "0" && showViewCart === true ? (
-                                                            <button className="btn btn-primary"
-                                                                onClick={() => {
-                                                                    navigate("/user/carts")
-                                                                }}
-                                                            >
-                                                                <AiOutlineFundView
-                                                                    style={{
-                                                                        fontSize: "17px",
-                                                                        marginRight: "6px",
-                                                                        marginTop: "-3px",
+                                                            <>
+                                                                <button className="btn btn-primary"
+                                                                    onClick={() => {
+                                                                        navigate("/user/carts")
                                                                     }}
-                                                                />
-                                                                View To Cart
-                                                            </button>
+                                                                >
+                                                                    <AiOutlineFundView
+                                                                        style={{
+                                                                            fontSize: "17px",
+                                                                            marginRight: "6px",
+                                                                            marginTop: "-3px",
+                                                                        }}
+                                                                    />
+                                                                    View To Cart
+                                                                </button>
+                                                                {
+                                                                    wishlistFlag ?
+                                                                        <button className="btn btn-primary"
+                                                                            style={{ marginLeft: "30px" }}
+                                                                            onClick={() => {
+                                                                                setToWishlistHandler()
+                                                                            }}
+                                                                        >
+                                                                            <FaHeart
+                                                                                style={{
+                                                                                    fontSize: "17px",
+                                                                                    marginRight: "6px",
+                                                                                    marginTop: "-3px",
+                                                                                }}
+                                                                            />
+                                                                            Add To Wishlist
+                                                                        </button> : ""
+                                                                }
+                                                            </>
                                                         ) : (auth?.user?.role == "1") ? ("") : (
                                                             <>
                                                                 <button className="btn btn-primary"
@@ -642,6 +686,24 @@ border-radius: 4px; /* Rounded corners for the thumb */
                                                                     />
                                                                     Order Now
                                                                 </button>
+                                                                {
+                                                                    wishlistFlag ?
+                                                                        <button className="btn btn-primary"
+                                                                            style={{ marginLeft: "30px" }}
+                                                                            onClick={() => {
+                                                                                setToWishlistHandler()
+                                                                            }}
+                                                                        >
+                                                                            <FaHeart
+                                                                                style={{
+                                                                                    fontSize: "17px",
+                                                                                    marginRight: "6px",
+                                                                                    marginTop: "-3px",
+                                                                                }}
+                                                                            />
+                                                                            Add To Wishlist
+                                                                        </button> : ""
+                                                                }
                                                             </>
                                                         )
                                                     }
@@ -731,26 +793,26 @@ border-radius: 4px; /* Rounded corners for the thumb */
                     </div>
                 </div>
                 {showGif && (
-  <div style={{
-    position: 'fixed',
-    top: 10,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    zIndex: 1000,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the transparency here
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }}>
-    <img
-      src={gif}
-      alt="Celebration GIF"
-      width={'50%'}
-      style={{ maxWidth: '100%', maxHeight: '100%' }}
-    />
-  </div>
-)}
+                    <div style={{
+                        position: 'fixed',
+                        top: 10,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        zIndex: 1000,
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the transparency here
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}>
+                        <img
+                            src={gif}
+                            alt="Celebration GIF"
+                            width={'50%'}
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
+                        />
+                    </div>
+                )}
 
                 <Modal open={ratingFlag} style={{ width: "100px" }}>
                     <div
@@ -834,7 +896,7 @@ border-radius: 4px; /* Rounded corners for the thumb */
                                     {/* ): ""} */}
                                     <p>Your ratings/feedback will be appreciated. And help us to grow further</p>
                                 </div>
-                               
+
                                 <div className="modal-footer border-0">
 
                                     <button

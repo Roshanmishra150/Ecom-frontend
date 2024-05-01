@@ -15,7 +15,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 
 import Avatar from "@mui/material/Avatar";
-import logo from "../../logo2.png";
+import logo from "../../images/logo2.png";
 
 
 

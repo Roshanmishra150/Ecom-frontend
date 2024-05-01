@@ -38,11 +38,18 @@ import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { v4 as uuidv4 } from 'uuid';
 
+// import useRazorpay from "react-razorpay";
+// import Razorpay from "razorpay"
+
 
 
 const CreateProduct = () => {
+    // const [Razorpay] = useRazorpay()
     const [auth, setAuth] = useAuth();
     const [totalproductsCost, setTotalproductsCost] = useState(0);
+    const [paymentConfirmtionFlag, setPaymentConfirmtionFlag] = useState(false);
+    const [submitProductData, setSubmitProductData] = useState([]);
+    const [paymentName, setPaymentName] = useState("");
     const [shippingCost, setShippingCost] = useState(0);
     const [loading, setLoading] = useState(false);
     const [cartItems, setCartItems] = useState([]);
@@ -117,6 +124,12 @@ const CreateProduct = () => {
         }
     }, []);
 
+    const loadScripts = async () => {
+        const razorpayScript = document.createElement('script');
+        razorpayScript.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        document.body.appendChild(razorpayScript);
+    };
+
     const addToCartFunc = async () => {
         setLoading(true);
         // const preNcount = sessionStorage.getItem("cCount");
@@ -143,12 +156,12 @@ const CreateProduct = () => {
                         name: item.product.name,
                         slug: item.product.slug,
                         description: item.product.description,
-                        quantity: item.product.quantity,
+                        quantity: item?.quantity,
                         totalCost: item.product.price,
                         price: item.product.price,
                         productId: item.product._id,
                         cart_id: item?._id,
-                        category : item?.product?.category,
+                        category: item?.product?.category,
                         rating: item.product.averageRating,
                     };
                     initialCartItems.push(initialCartItemsObject)
@@ -239,7 +252,9 @@ const CreateProduct = () => {
                 );
             })
             addToCartFunc()
+            setPaymentConfirmtionFlag(false)
             toast.success("Your Order Is Successful")
+            navigate("/user/orders")
         }
     }
 
@@ -249,7 +264,7 @@ const CreateProduct = () => {
             ...item.product,
             name: item.name,
             slug: item.slug,
-            category : item?.category,
+            category: item?.category,
             description: item.description,
             quantity: item.quantity,
             totalCost: item.price,
@@ -285,13 +300,138 @@ const CreateProduct = () => {
             if (del_response?.data?.success) {
                 addToCartFunc()
             }
+            setPaymentConfirmtionFlag(false)
             toast.success("Your Order Is Successful")
             navigate("/user/orders")
         }
     }
 
+    // const loadScript = (src) => {
+    //     return new Promise((resolve)=>{
+    //         const script = document.createElement("script")
+    //         script.src = src;
+    //         script.onload = () => {
+    //             resolve(true)
+    //         }
+    //         script.onerror = () => {
+    //             resolve(false)
+    //         }
+    //         document.body.appendChild(script)
+    //     })
+    // }
+
+    const submitPaymentTransaction = async (e, items = "") => {
+        try {
+
+
+            // const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js")
+
+            let amount = 0
+
+            if (paymentName == "submitSingelOrder") {
+                amount = items.price > 0
+                    ? (
+                        items.price +
+                        (items.price < 200
+                            ? 40
+                            : 0) -
+                        ((items.price / 100) * 10) +
+                        ((items.price / 100) * 18)
+                    ).toFixed(2) : 0
+            }
+            if (paymentName == "submitMultiOrder") {
+                amount = totalproductsCost > 0
+                    ? (
+                        totalproductsCost +
+                        (totalproductsCost < 200
+                            ? 40
+                            : 0) -
+                        ((totalproductsCost / 100) * 10) +
+                        ((totalproductsCost / 100) * 18)
+                    ).toFixed(2)
+                    : 0
+            }
+
+            const bodyContant = {
+                // "amount": parseInt(amount),
+                "amount": parseInt((parseFloat(amount) * 100).toFixed(0)),
+                "currency": "INR",
+                "receipt": "Receipt no. 1",
+            }
+
+            const response = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/payment`, bodyContant)
+
+            console.log("razorpay", response);
+            if (response?.data?.success == false) {
+                toast.error(response?.data?.message)
+            }
+            var options = {
+                "key": "rzp_test_gDudH6f3qtaRif", // Enter the Key ID generated from the Dashboard
+                "amount": response?.data?.orders?.amount,
+                // "amount":73313,
+                // "amount": totalproductsCost > 0
+                //     ? (
+                //         totalproductsCost +
+                //         (totalproductsCost < 200
+                //             ? 40
+                //             : 0) -
+                //         ((totalproductsCost / 100) * 10) +
+                //         ((totalproductsCost / 100) * 18)
+                //     ).toFixed(2)
+                //     : 0, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": response?.data?.orders?.currency,
+                "name": "E-commerce",
+                "description": "Test Transaction",
+                "image": "/logo192.png",
+                "order_id": response?.data?.orders?.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                "handler": async function (response) {
+                    const body = { ...response }
+
+                    const validate = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/payment/validate`, body)
+                    if (validate?.data?.success) {
+                        if (e.target.name == "submitMultiOrder") {
+                            submitOrderHandler()
+                        }
+                        if (e.target.name == "submitSingelOrder") {
+                            submitSingelOrderHandler(items)
+                        }
+                    } else {
+                        toast.error("Payment Failed")
+                    }
+                },
+                "prefill": {
+                    "name": auth?.user?.name,
+                    "email": auth?.user?.email,
+                    "contact": auth?.user?.phone
+                },
+                "notes": {
+                    "address": auth?.user?.address
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            // var rzp1 = new window.Razorpay(options);
+            const rzp1 = new window.Razorpay(options);
+            rzp1.on('payment.failed', function (response) {
+                toast.error(response.error.description);
+                toast.error(response.error.reason);
+            });
+
+            rzp1.open();
+            e.preventDefault();
+
+            if (response?.data?.success === true) {
+            } else {
+                toast.error(response?.data?.message)
+            }
+
+        } catch (error) {
+
+        }
+    }
     return (
-        <Layout title="create-product admin">
+        <Layout title="addToCart E-comm">
             <div style={containerStyle} className="container-fluid m-0 p-4">
                 <div className="row ">
                     <div style={leftStyle} className="col-md-3 ">
@@ -331,7 +471,7 @@ const CreateProduct = () => {
                                                 return (
                                                     <>
                                                         <div
-                                                            className="card mb-3"
+                                                            className="cards mb-3"
                                                         // style={{ Width: 140 }}
                                                         >
                                                             <div className="row g-0">
@@ -510,13 +650,16 @@ const CreateProduct = () => {
                                                                         marginTop: "7px",
                                                                     }}
                                                                 >
-                                                                    <button className="btn btn-outline-primary" onClick={() =>
-                                                                        submitSingelOrderHandler(
-                                                                            cartItems[
-                                                                            productId
-                                                                            ]
-                                                                        )
-                                                                    }>
+                                                                    <button className="btn btn-outline-primary" name="submitSingelOrder" onClick={(e) => {
+                                                                        // submitSingelOrderHandler(
+                                                                        //     cartItems[
+                                                                        //     productId
+                                                                        //     ]
+                                                                        // )
+                                                                        setPaymentName("submitSingelOrder")
+                                                                        setSubmitProductData(cartItems[productId])
+                                                                        setPaymentConfirmtionFlag(true)
+                                                                    }}>
                                                                         <BoltOutlinedIcon />{" "}
                                                                         Buy this now
                                                                     </button>
@@ -646,7 +789,7 @@ const CreateProduct = () => {
                                             >
                                                 Discount (10%)
                                                 <span style={{ marginLeft: "60px" }}>
-                                                    ${((totalproductsCost / 100) * 10).toFixed(2)}
+                                                    ${parseInt((totalproductsCost / 100) * 10).toFixed(2)}
                                                 </span>
                                             </label>
                                             <br></br>
@@ -658,7 +801,7 @@ const CreateProduct = () => {
                                             >
                                                 Tax (18%){" "}
                                                 <span style={{ marginLeft: "96px" }}>
-                                                    ${((totalproductsCost / 100) * 18).toFixed(2)}
+                                                    ${parseInt((totalproductsCost / 100) * 18).toFixed(2)}
                                                 </span>
                                             </label>
                                             <br></br>
@@ -675,12 +818,12 @@ const CreateProduct = () => {
 
                                                     {totalproductsCost > 0
                                                         ? (
-                                                            totalproductsCost +
-                                                            (totalproductsCost < 200
-                                                                ? 40
-                                                                : 0) -
-                                                            ((totalproductsCost / 100) * 10) +
-                                                            ((totalproductsCost / 100) * 18)
+                                                            parseInt(totalproductsCost +
+                                                                (totalproductsCost < 200
+                                                                    ? 40
+                                                                    : 0) -
+                                                                ((totalproductsCost / 100) * 10) +
+                                                                ((totalproductsCost / 100) * 18))
                                                         ).toFixed(2)
                                                         : 0}
                                                 </span>
@@ -688,13 +831,19 @@ const CreateProduct = () => {
                                             <br></br>
                                             <button
                                                 className="btn btn-success"
+                                                name="submitMultiOrder"
                                                 style={{
                                                     marginLeft: "30px",
                                                     marginTop: "30px",
                                                     width: "200px",
                                                 }}
-                                                onClick={() => {
-                                                    submitOrderHandler()
+                                                onClick={(e) => {
+                                                    // submitOrderHandler()
+                                                    // submitPaymentTransaction(e)
+
+                                                    loadScripts();
+                                                    setPaymentName("submitMultiOrder")
+                                                    setPaymentConfirmtionFlag(true)
                                                 }}
                                             >
                                                 Place Order{" "}
@@ -707,6 +856,122 @@ const CreateProduct = () => {
 
                     </div>
                 </div>
+                <Modal open={paymentConfirmtionFlag} style={{ width: "100px" }}>
+                    <div
+                        className={
+                            paymentConfirmtionFlag ? "modal cus-modal fade show" : "modal cus-modal fade"
+                        }
+                        id="GreetingnModal"
+                        tabIndex={-1}
+                        aria-labelledby="exampleModalLabel"
+                        style={paymentConfirmtionFlag ? { display: "block" } : { display: "none" }}
+                    >
+                        <div
+                            className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                            style={{ maxWidth: "80%", width: "fit-content" }}
+                        >
+                            <div className="modal-content ">
+                                <div className="modal-header border-0 pd20">
+                                    <h5
+                                        className="modal-title d-flex align-items-center c-black fs20 WorkSans-extra-bold"
+                                        id="exampleModalLabel"
+                                    >
+                                        <div className="m-head-icon me-3">
+                                            <svg
+                                                width="34"
+                                                height="34"
+                                                viewBox="0 0 34 34"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <rect
+                                                    width="34"
+                                                    height="33.9799"
+                                                    rx="16.9899"
+                                                    fill="#DAE8FF"
+                                                />
+                                                <path
+                                                    d="M18.875 9.5H12.5C12.1022 9.5 11.7206 9.65804 11.4393 9.93934C11.158 10.2206 11 10.6022 11 11V23C11 23.3978 11.158 23.7794 11.4393 24.0607C11.7206 24.342 12.1022 24.5 12.5 24.5H21.5C21.8978 24.5 22.2794 24.342 22.5607 24.0607C22.842 23.7794 23 23.3978 23 23V13.625L18.875 9.5Z"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M18.5 9.5V14H23"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M17 21.5V17"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M14.75 19.25H19.25"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h4 className=" pt-2"> Confirm Payment </h4>
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                        onClick={() => setPaymentConfirmtionFlag(false)}
+                                    ></button>
+                                </div>
+                                <div className="modal-body cus-m-body gree-m-body pd-t0 pd0">
+                                    <div className="filter-container ">
+                                        <h2>{auth?.user?.name}</h2>
+                                        {/* <h5>{auth?.user?.phone}</h5> */}
+                                        {/* <h5>{auth?.user?.address}</h5> */}
+
+                                        <h3 style={{ color: "red" }}>Please confirm the mode of payment !!!</h3>
+
+                                    </div>
+                                </div>
+                                <div className="modal-footer border-0">
+
+                                    <button
+                                        type="button"
+                                        name={`${paymentName}`}
+                                        className="btn btn-outline-danger"
+                                        data-bs-dismiss="modal"
+                                        onClick={() => {
+                                            if (paymentName == "submitSingelOrder") {
+                                                submitSingelOrderHandler(submitProductData)
+                                            } else {
+                                                submitOrderHandler()
+                                            }
+                                        }}
+                                    >
+                                        Cash On Delivery
+                                    </button>
+                                    <button
+                                        type="button"
+                                        name={`${paymentName}`}
+                                        className="btn btn-outline-primary"
+                                        onClick={(e) => {
+                                            if (paymentName == "submitSingelOrder") {
+                                                submitPaymentTransaction(e, submitProductData)
+                                            } else {
+                                                submitPaymentTransaction(e, "");
+                                            }
+                                        }}
+                                    >
+                                        Pay Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
             </div>
         </Layout>
     );

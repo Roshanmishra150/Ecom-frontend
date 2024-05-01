@@ -296,6 +296,12 @@ filters
   background: #19375a;
 }
 
+.Q_A_container {  
+
+  margin-top:26px;
+  height: 400px;
+  overflow-y: auto;
+}
 
 .topCards {
   background-color: "lightgray";

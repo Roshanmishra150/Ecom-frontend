@@ -529,7 +529,7 @@ const CreateProduct = () => {
 };
 
   return (
-    <Layout title="create-product admin">
+    <Layout title="product E-comm">
       <div style={containerStyle} className="container-fluid m-0 p-4">
         <div className="row ">
           <div style={leftStyle} className="col-md-3 ">

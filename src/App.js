@@ -7,7 +7,6 @@ import Policy from "./pages/Policy";
 import Pagenotfound from "./pages/Pagenotfound";
 import Register from "./pages/Auth/Register";
 import Login from "./pages/Auth/Login";
-import Dashboard from "./pages/User/Dashboard";
 import Private from "./components/Routes/Private";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import AdminRoutes from "./components/Routes/AdminRoutes";
@@ -17,7 +16,6 @@ import CreateCategory from "./pages/Admin/CreateCategory";
 import CreateProduct from "./pages/Admin/CreateProduct";
 import Users from "./pages/Admin/Users";
 import Orders from "./pages/User/Orders";
-import Profile from "./pages/User/Profile";
 import "antd/dist/reset.css";
 import CreateEditProduct from "./pages/Admin/CreateEditProduct";
 import ViewProduct from "./pages/viewProduct";
@@ -26,9 +24,12 @@ import Setting from "./pages/Admin/Setting";
 import React from "react";
 import HomePage from "./pages/User/HomePage";
 import Notification from "./pages/User/Notification";
-import Header from "./components/layout/Header";
 import AddToCart from "./pages/User/AddToCart"
 import ViewOrder from "./pages/User/OrderViewPage"
+import Wishlist from "./pages/User/Wishlist";
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import FAQS from "./pages/FAQS";
+import AboutRole from "./pages/User/AboutRole";
 
 function App() {
     return (
@@ -46,19 +47,19 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/user" element={<Private />}>
                     <Route path="homepage" element={<HomePage />} />
-                    <Route path="dashboard" element={<Dashboard />} />
                     <Route path="notification" element={<Notification />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="vieworders/:order_id" element={<ViewOrder />} />
-                    <Route path="profile" element={<Profile />} />
+                    <Route path="wishlist" element={<Wishlist />} />
                     <Route path="carts" element={<AddToCart />} />
                     <Route path="setting" element={<Setting />} />
                     <Route path="view-product" element={<ViewProduct />} />
+                    <Route path="faqs" element={<FAQS />} />
+                    <Route path="about" element={<AboutRole />} />
                 </Route>
                 <Route path="/admin" element={<AdminRoutes />}>
                     <Route path="homepage" element={<HomePage />} />
                     <Route path="dashboard" element={<AdminDashboard />} />
-                    {/* <Route path="dashboard" element={<CreateCategory />} /> */}
                     <Route
                         path="create-category"
                         element={<CreateCategory />}
@@ -73,6 +74,7 @@ function App() {
                     />
                     <Route path="manage-product" element={<CreateProduct />} />
                     <Route path="users" element={<Users />} />
+                    <Route path="faqs" element={<FAQS />} />
                     <Route path="setting" element={<Setting />} />
                     <Route path="orders" element={<AdminOrders />} />
                     <Route path="view-product" element={<ViewProduct />} />
@@ -86,6 +88,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

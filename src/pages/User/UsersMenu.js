@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import logo from "../../logo4.png";
+import logo from "../../images/logo4.png";
 import { Tooltip } from "antd";
 import { IoHome } from "react-icons/io5";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -13,6 +13,9 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { BsClipboard2HeartFill } from "react-icons/bs";
 import { MdPayment } from "react-icons/md";
+import { FaQuestionCircle } from "react-icons/fa";
+import { BsFillInfoCircleFill } from "react-icons/bs";
+
 
 const SideNavigation = props => {
     const [userRoleId, setUserRoleId] = useState("");
@@ -155,7 +158,7 @@ const SideNavigation = props => {
                 </div>}
             <nav className="side-nav align-items-center">
                 <ul>
-                    <li className="active-links" >
+                    {/* <li className="active-links" >
                         {!toggle
                             ? <Tooltip placement="right" title="Coming Soon!!!" color={"#7FBDA8"}>
                                 <NavLink
@@ -200,7 +203,7 @@ const SideNavigation = props => {
                                     Dashboard
                                 </span>
                             </NavLink>}
-                    </li>
+                    </li> */}
 
                     <li>
                         {!toggle
@@ -253,7 +256,7 @@ const SideNavigation = props => {
                                 <NavLink
                                     to={"/user/orders"}
                                     style={{
-                                        paddingLeft: "2px",
+                                        paddingLeft: "0px",
                                         textDecoration: "none"
                                     }}
 
@@ -261,7 +264,7 @@ const SideNavigation = props => {
                                     <FaJediOrder
                                         style={{
                                             fontSize: "22px",
-                                            marginRight: "10px"
+                                            marginRight: "7px"
                                         }}
                                     />
                                     {!toggle
@@ -274,7 +277,7 @@ const SideNavigation = props => {
                             : <NavLink
                                 to={"/user/orders"}
                                 style={{
-                                    paddingLeft: "2px",
+                                    paddingLeft: "0px",
                                     textDecoration: "none"
                                 }}
 
@@ -282,7 +285,7 @@ const SideNavigation = props => {
                                 <FaJediOrder
                                     style={{
                                         fontSize: "22px",
-                                        marginRight: "10px"
+                                        marginRight: "7px"
                                     }}
                                 />
                                 {!toggle
@@ -294,9 +297,9 @@ const SideNavigation = props => {
                     </li>
                     <li>
                         {!toggle
-                            ? <Tooltip placement="right" title="Coming Soon!!!" color={"#7FBDA8"}>
+                            ? <Tooltip placement="right" title="WishList" >
                                 <NavLink
-                                    // to={"/user/wishlist"}
+                                    to={"/user/wishlist"}
                                     style={{
                                         paddingLeft: "2px",
                                         textDecoration: "none"
@@ -306,7 +309,7 @@ const SideNavigation = props => {
                                     <BsClipboard2HeartFill 
                                         style={{
                                             fontSize: "22px",
-                                            marginRight: "10px"
+                                            marginRight: "6px"
                                         }}
                                     />
                                     {!toggle
@@ -317,7 +320,7 @@ const SideNavigation = props => {
                                 </NavLink>
                             </Tooltip>
                             : <NavLink
-                                // to={"/user/wishlist"}
+                                to={"/user/wishlist"}
                                 style={{
                                     paddingLeft: "2px",
                                     textDecoration: "none"
@@ -327,7 +330,7 @@ const SideNavigation = props => {
                                 <BsClipboard2HeartFill
                                     style={{
                                         fontSize: "22px",
-                                        marginRight: "10px"
+                                        marginRight: "6px"
                                     }}
                                 />
                                 {!toggle
@@ -380,17 +383,18 @@ const SideNavigation = props => {
                                     </span>}
                             </NavLink>}
                     </li>
+
                     <li>
                         {!toggle
-                            ? <Tooltip placement="right" title="Coming Soon!!!" color={"#7FBDA8"}>
+                            ? <Tooltip placement="right" title="FAQS">
                                 <NavLink
-                                    // to={"/user/transactions"}
+                                    to={"/user/faqs"}
                                     style={{
                                         paddingLeft: "2px",
                                         textDecoration: "none"
                                     }}
                                 >
-                                    <MdPayment
+                                    <FaQuestionCircle
                                         style={{
                                             fontSize: "22px",
                                             marginRight: "5px"
@@ -399,18 +403,18 @@ const SideNavigation = props => {
                                     {!toggle
                                         ? ""
                                         : <span style={{ fontSize: "16px" }}>
-                                            Transactions
+                                            FAQS
                                         </span>}
                                 </NavLink>
                             </Tooltip>
                             : <NavLink
-                                // to={"/user/transactions"}
+                                to={"/user/faqs"}
                                 style={{
                                     paddingLeft: "2px",
                                     textDecoration: "none"
                                 }}
                             >
-                                <MdPayment
+                                <FaQuestionCircle
                                     style={{
                                         fontSize: "22px",
                                         marginRight: "5px"
@@ -419,10 +423,55 @@ const SideNavigation = props => {
                                 {!toggle
                                     ? ""
                                     : <span style={{ fontSize: "16px" }}>
-                                        Transactions
+                                        FAQS
                                     </span>}
                             </NavLink>}
                     </li>
+
+                    <li>
+                        {!toggle
+                            ? <Tooltip placement="right" title="About Us">
+                                <NavLink
+                                    to={"/user/about"}
+                                    style={{
+                                        paddingLeft: "2px",
+                                        textDecoration: "none"
+                                    }}
+                                >
+                                    <BsFillInfoCircleFill
+                                        style={{
+                                            fontSize: "22px",
+                                            marginRight: "5px"
+                                        }}
+                                    />
+                                    {!toggle
+                                        ? ""
+                                        : <span style={{ fontSize: "16px" }}>
+                                            About Us
+                                        </span>}
+                                </NavLink>
+                            </Tooltip>
+                            : <NavLink
+                                to={"/user/about"}
+                                style={{
+                                    paddingLeft: "2px",
+                                    textDecoration: "none"
+                                }}
+                            >
+                                <BsFillInfoCircleFill
+                                    style={{
+                                        fontSize: "22px",
+                                        marginRight: "5px"
+                                    }}
+                                />
+                                {!toggle
+                                    ? ""
+                                    : <span style={{ fontSize: "16px" }}>
+                                        About Us
+                                    </span>}
+                            </NavLink>}
+                    </li>
+                    
                     <li>
                         {!toggle
                             ? <Tooltip placement="right" title="Logout">

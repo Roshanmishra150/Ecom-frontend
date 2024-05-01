@@ -18,7 +18,7 @@ import { BsPersonFill } from "react-icons/bs";
 import { HiShoppingBag } from "react-icons/hi";
 import { GiBilledCap } from "react-icons/gi";
 import { CgPerformance } from "react-icons/cg";
-import { Modal } from "@mui/material";
+import { Input, Modal } from "@mui/material";
 
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -33,6 +33,7 @@ import { useAuth } from "../../context/AuthContext";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
+import { BiSend } from "react-icons/bi";
 
 const style = {
     width: "100%",
@@ -44,7 +45,12 @@ const CreateProduct = () => {
     const [auth, setAuth] = useAuth();
     const [nCount, setnCount] = useState(0);
     const [notificationList, setNotificationList] = useState([]);
-
+    const [askQuestion, setAskQuestion] = useState("");
+    const [answerValue, setAnswerValue] = useState("");
+    const [questionValue, setQuestionValue] = useState("");
+    const [reciverId, setReciverId] = useState("");
+    const [replyToFlag, setReplyToFlag] = useState(false);
+ 
     const navigate = useNavigate();
 
     const containerStyle = {
@@ -128,8 +134,35 @@ const CreateProduct = () => {
         }
     };
 
+    const handleSubmit = async() => {
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_API}/api/v1/auth/sendNotification`,
+                {
+                  title: "Reply To Question",
+                  question: questionValue,
+                  answer: answerValue,
+                  recipientId: reciverId,
+                  senderId: auth?.user?._id,
+                }
+              );
+              if (response?.data?.success == true) {
+                toast.success(response?.data?.message);
+                setQuestionValue("")
+                setAnswerValue("")
+                setAskQuestion("")
+                setReplyToFlag(false)
+                } else {
+                toast.error(response?.data?.message);
+              }
+        } catch (error) {
+            
+        }
+        // Here you can handle form submission, such as sending data to a server or displaying a success message
+    };
+
     return (
-        <Layout title="create-product admin">
+        <Layout title="notification E-comm">
             <div style={containerStyle} className="container-fluid m-0 p-4">
                 <div className="row ">
                     <div style={leftStyle} className="col-md-3 ">
@@ -172,9 +205,18 @@ const CreateProduct = () => {
                                                 <Typography variant="body1">
                                                     From: {item?.name}
                                                 </Typography>
-                                                <Typography variant="body2">
-                                                    Message: {item?.content}
+                                                {
+                                                    item?.question && item?.question != "" ? (
+                                                        <Typography variant="body2">
+                                                    <span style={{color:"#01aaaa"}}>Question: {item?.question} </span>
                                                 </Typography>
+                                                    ) : (<Typography variant="body2">
+                                                    <span style={{color:"#01aaaa"}}>Message: {item?.content}</span>
+                                                </Typography>)
+                                                }
+                                                {/* <Typography variant="body2">
+                                                    Message: {item?.content}
+                                                </Typography> */}
                                             </div>
                                             <p style={{ float: "right" }}>
                                                 <h6>
@@ -189,10 +231,33 @@ const CreateProduct = () => {
                                                 </h6>
                                             </p>
                                         </ListItem>
-                                        <DeleteForeverIcon
+                                        <div>
+
+                                        <BiSend
                                             className="deleteNotification"
                                             style={{
                                                 marginTop: "20px",
+                                                fontSize: "40px",
+                                                color: "red", // Change the color when the effect is shown
+                                                transition: "color 0.3s", // Add a transition for smooth color change
+                                                cursor: "pointer",
+                                                borderRadius: "50%",
+                                                marginLeft: "20px",
+                                                padding: "4px",
+                                            }}
+                                            onClick={() => {
+                                                setReplyToFlag(true)
+                                                setReciverId(item?.sender)
+                                                setQuestionValue(item?.question)
+                                                // handleSubmit(
+                                                //     item?.recipient
+                                                // );
+                                            }}
+                                        />
+                                        <DeleteForeverIcon
+                                            className="deleteNotification"
+                                            style={{
+                                                marginTop: "10px",
                                                 fontSize: "40px",
                                                 color: "red", // Change the color when the effect is shown
                                                 transition: "color 0.3s", // Add a transition for smooth color change
@@ -207,12 +272,133 @@ const CreateProduct = () => {
                                                 );
                                             }}
                                         />
+                                        </div>
                                     </div>
                                 );
                             })}
                         </List>
                     </div>
                 </div>
+
+                {/* open create faq modal */}
+                <Modal open={replyToFlag} style={{ width: "100px" }}>
+                    <div
+                        className={
+                            replyToFlag ? "modal cus-modal fade show" : "modal cus-modal fade"
+                        }
+                        id="GreetingnModal"
+                        tabIndex={-1}
+                        aria-labelledby="exampleModalLabel"
+                        style={replyToFlag ? { display: "block" } : { display: "none" }}
+                    >
+                        <div
+                            className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                            style={{ maxWidth: "80%", width: "fit-content" }}
+                        >
+                            <div className="modal-content ">
+                                <div className="modal-header border-0 pd20">
+                                    <h5
+                                        className="modal-title d-flex align-items-center c-black fs20 WorkSans-extra-bold"
+                                        id="exampleModalLabel"
+                                    >
+                                        <div className="m-head-icon me-3">
+                                            <svg
+                                                width="34"
+                                                height="34"
+                                                viewBox="0 0 34 34"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <rect
+                                                    width="34"
+                                                    height="33.9799"
+                                                    rx="16.9899"
+                                                    fill="#DAE8FF"
+                                                />
+                                                <path
+                                                    d="M18.875 9.5H12.5C12.1022 9.5 11.7206 9.65804 11.4393 9.93934C11.158 10.2206 11 10.6022 11 11V23C11 23.3978 11.158 23.7794 11.4393 24.0607C11.7206 24.342 12.1022 24.5 12.5 24.5H21.5C21.8978 24.5 22.2794 24.342 22.5607 24.0607C22.842 23.7794 23 23.3978 23 23V13.625L18.875 9.5Z"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M18.5 9.5V14H23"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M17 21.5V17"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M14.75 19.25H19.25"
+                                                    stroke="#0047BA"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h4 className=" pt-2"> FAQS </h4>
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                        onClick={() => setReplyToFlag(false)}
+                                    ></button>
+                                </div>
+                                <div className="modal-body cus-m-body gree-m-body pd-t0 pd0">
+                                    <label>Enter Question: </label>
+                                    <br></br>
+                                    <Input
+                                        type="text"
+                                        // placeholder="Enter Question Title"
+                                        style={{
+                                            width: "500px",
+                                            marginLeft: "10px"
+                                        }}
+                                        value={questionValue}
+                                        disabled
+                                        // onChange={(e) => setQuestionValue(e.target.value)}
+                                    />
+                                    <br></br>
+                                    <br></br>
+                                    <label>Enter Answer: </label>
+                                    <textarea
+                                        style={{
+                                            width: "100%",
+                                            outline: "none",
+                                            border: "solid 1px gray 1px 0px 0px 0px",
+                                            height: "80px",
+                                            padding: "5px",
+                                            marginTop: "20px",
+                                            placeholder: "Enter Answer"
+                                        }}
+                                        cols={3}
+                                        value={answerValue}
+                                        onChange={(e) => setAnswerValue(e.target.value)}
+
+                                    />
+                                </div>
+                                <div className="modal-footer border-0">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => {
+                                            handleSubmit()
+                                        }}
+                                    >
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
             </div>
         </Layout>
     );
