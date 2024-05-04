@@ -668,6 +668,7 @@ const OrderPage = () => {
       if (data?.success === true) {
         toast.success(`Order ${status} successfully`)
         AdminOrdersFunc()
+        setLoading(false)
       }
     } catch (error) {
       toast.error(`Something went wrong while ${status} orders`);

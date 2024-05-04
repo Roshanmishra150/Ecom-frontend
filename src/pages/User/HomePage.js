@@ -153,8 +153,15 @@ const CreateProduct = () => {
   };
 
   useEffect(() => {
-    getProductLists();
-    getAllCategory();
+    if(!auth){
+
+      sessionStorage.clear()
+        localStorage.clear()
+      navigate("/login");
+    }else{
+      getProductLists();
+      getAllCategory();
+    }
   }, []);
 
   const handelDelete = async (item) => {

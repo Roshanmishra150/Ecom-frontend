@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
 import "../../styles/AuthStyles.css";
 import { toast } from "react-hot-toast";
@@ -70,6 +70,17 @@ const Login = () => {
       toast.error("something went wrong");
     }
   };
+
+  useEffect(() => {
+    if (location.pathname.includes("login")) {
+      sessionStorage.clear()
+      setAuth({
+        user: "",
+        token: "",
+    });
+      localStorage.clear()
+    }
+  }, []);
 
   return (
     <Layout title="Login - E-commerce">

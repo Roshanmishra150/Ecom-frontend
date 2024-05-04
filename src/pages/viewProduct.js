@@ -84,7 +84,7 @@ const Orders = () => {
       setLoading(false);
 
     } catch (error) {
-      toast.error("Something went wrong in getting categories");
+      // toast.error("Something went wrong in getting categories");
       setLoading(false);
     }
   };
@@ -163,6 +163,12 @@ const Orders = () => {
       getSimilarProductLists();
     }
     getProductQandAHandler()
+
+    if(sessionStorage.getItem("productId")){
+
+    }else{
+      navigate("/")
+    }
   }, [productLists]);
 
   const containerStyleMain = {
@@ -278,21 +284,25 @@ border-radius: 4px; /* Rounded corners for the thumb */
   }
 
   const setToWishlistHandler = async () => {
-    try {
-      const body = {
-        "products": sessionStorage.getItem("productId"),
-        "userId": auth?.user?._id
+    if(sessionStorage.getItem("user")){
+      try {
+        const body = {
+          "products": sessionStorage.getItem("productId"),
+          "userId": auth?.user?._id
+        }
+  
+        const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/set-wishlist`, body)
+  
+        if (res?.data?.success) {
+          toast.success("Product successfully added to whislist")
+          setWishlistFlag(false)
+        }
+  
+      } catch (error) {
+  
       }
-
-      const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/set-wishlist`, body)
-
-      if (res?.data?.success) {
-        toast.success("Product successfully added to whislist")
-        setWishlistFlag(false)
-      }
-
-    } catch (error) {
-
+    }else{
+      navigate("/login")
     }
   }
 
@@ -530,6 +540,7 @@ border-radius: 4px; /* Rounded corners for the thumb */
         toast.success("Answer is submited successfully")
         setAnswer("")
         setFaqs_id("")
+        getProductQandAHandler()
         setSendAnswerFlag(false)
       }
     } catch (error) {
@@ -722,13 +733,16 @@ border-radius: 4px; /* Rounded corners for the thumb */
                         placeholder="Search your question.."
 
                       />
+                      {
+                        auth?.user ? 
                       <button className="btn btn-success" style={{
                         marginLeft: "30px"
                       }}
                         onClick={() => setAskQuestionFlag(true)}
                       >
                         Ask question
-                      </button>
+                      </button> : ""
+                      }
                     </div>
                     {
                       reviewQuestion?.length > 0 ?
@@ -745,7 +759,7 @@ border-radius: 4px; /* Rounded corners for the thumb */
                                       marginLeft: "15px",
                                       marginTop: "-5px"
                                     }} 
-                                    value={answer}
+                                    value={item?._id == faqs_id ? answer : ""}
                                     onChange={(e) => {
                                       setAnswer(e.target.value)
                                       setFaqs_id(item?._id)

@@ -32,6 +32,8 @@ const AdminRoutes = () => {
       checkAuth();
     } else {
       console.log("error in protected page", auth);
+      navigate("/login")
+      sessionStorage.clear()
     }
   }, [auth?.token]);
   

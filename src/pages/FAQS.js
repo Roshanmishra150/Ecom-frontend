@@ -105,8 +105,8 @@ const FAQS = () => {
     const sendFaqsHandler = async () => {
         try {
             const body = {
-                "question": answerValue,
-                "answer": questionValue
+                "question": questionValue,
+                "answer": answerValue
             }
             const response = await axios.post(`${process.env.REACT_APP_API}/api/v1/auth/Faqs`, body)
 

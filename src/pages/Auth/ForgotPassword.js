@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useLocale } from "antd/es/locale";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const location = useLocale()
 
   const [data, setData] = useState({
     email: "",
@@ -47,6 +49,13 @@ const ForgotPassword = () => {
         console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (location.pathname.includes("forgot")) {
+      sessionStorage.clear()
+      localStorage.clear()
+    }
+  }, []);
 
   return (
     <Layout title="Register - E-commerce">

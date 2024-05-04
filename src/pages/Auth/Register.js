@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
 import "../../styles/AuthStyles.css";
 import { toast } from "react-hot-toast";
 
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [currentPasswordError, setCurrentPasswordError] = useState("")
   const [data, setData] = useState({
     Name: "",
     email: "",
@@ -18,38 +20,71 @@ const Register = () => {
   });
 
   const handleChange = (e) => {
-    setData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
+    if(e.target.name == "password"){
+      const strongPasswordRegex1 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%^*?&])[A-Za-z\d@$!%^*?&]{8,}$/;
+      if (e.target.value == "" || e.target.value == undefined) {
+        setCurrentPasswordError("Please Enter valid and strong");
+        setData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+        }));
+      } else if (!strongPasswordRegex1.test(e.target.value)) {
+        setCurrentPasswordError("Please Enter Strong Password")
+        setData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+        }));
+      }
+      else {
+        setCurrentPasswordError("");
+        setData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+        }));
+      }
+    }else{
+      setData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("running");
-      const res = await axios.post(
-        `${process.env.REACT_APP_API}/api/v1/auth/register`,
-        {
-          name: data.Name,
-          email: data.email,
-          password: data.password,
-          address: data.address,
-          phone: data.phone,
-          answer:data.answer,
+      if(currentPasswordError == ""){
+        console.log("running");
+        const res = await axios.post(
+          `${process.env.REACT_APP_API}/api/v1/auth/register`,
+          {
+            name: data.Name,
+            email: data.email,
+            password: data.password,
+            address: data.address,
+            phone: data.phone,
+            answer:data.answer,
+          }
+        );
+        if(res.data.success){
+          toast.success(res.data.message)
+          navigate('/login')
+        }else{
+          toast.error(res.data.error)
         }
-      );
-      if(res.data.success){
-        toast.success(res.data.message)
-        navigate('/login')
-      }else{
-        toast.error(res.data.error)
       }
     } catch (error) {
       toast.error("something went wrong")
 
     }
   };
+
+  useEffect(() => {
+    if (location.pathname.includes("register")) {
+      sessionStorage.clear()
+      localStorage.clear()
+    }
+  }, []);
 
   return (
     <Layout title="Register - E-commerce">
@@ -130,6 +165,13 @@ const Register = () => {
               required
             />
           </div>
+          {
+            currentPasswordError != "" ? 
+            <p style={{color:"red"}}>
+              {currentPasswordError}
+            </p>
+            : ""
+          }
           <button type="submit" className="btn btn-primary">
             REGISTER
           </button>

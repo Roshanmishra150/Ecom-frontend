@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, Navigate } from "react-router-dom";
+import { Link, NavLink, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -25,7 +25,7 @@ const Header = () => {
     const [cCount, setcCount] = useState(0);
     const [checkedValue, setCheckedValue] = useState(false);
     const [profileImage, setProfileImage] = useState("");
-
+    const location = useLocation()
 
     useEffect(() => {
         if (!auth?.user) {
@@ -33,10 +33,24 @@ const Header = () => {
                 user: "",
                 token: "",
             });
+            // sessionStorage.clear()
+            // localStorage.clear()
         }
+        
+        if (location.pathname.includes("login")) {
+            setAuth({
+                user: "",
+                token: "",
+            });
+            sessionStorage.clear()
+            localStorage.clear()
+        }
+          
+        
     }, []);
 
     useEffect(() => {
+        
         if (auth?.user) {
             notificationFunc();
             addToCartFunc()
@@ -50,6 +64,7 @@ const Header = () => {
             setProfileImage(mockImageData);
           } catch (error) {
           }
+          console.log("oooo",auth?.user);
     }, [sessionStorage, nCount]);
 
     
